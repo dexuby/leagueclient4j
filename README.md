@@ -13,7 +13,7 @@
     <version>1.0.0</version>
 </dependency>
 ```
-## Unfinished API for the League of Legends client endpoints of the locally running server
+## Unfinished API for the League of Legends client endpoints
 
 ### How to obtain an API instance?
 Make sure to start the League of Legends client before you call the #hookAPI method,
