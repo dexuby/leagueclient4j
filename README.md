@@ -1,3 +1,18 @@
+[![](https://jitpack.io/v/dexuby/leagueclient4j.svg)](https://jitpack.io/#dexuby/leagueclient4j)
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependency>
+    <groupId>com.github.dexuby</groupId>
+    <artifactId>leagueclient4j</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 ## Unfinished API for the League of Legends client endpoints of the locally running server
 
 ### How to obtain an API instance?
