@@ -1,0 +1,19 @@
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+.settings/
+
+# Build
+build/
+bin/
+dist/
+manifest.mf
+
+# Maven
+target/
+build.xml
+
+# Other Stuff
+logs/
