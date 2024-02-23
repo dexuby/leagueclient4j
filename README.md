@@ -34,6 +34,7 @@ The API provided by this library currently only supports a few things:
 - You can invite people to your current lobby: `LeagueClientAPI#inviteToLobby`
 - You can create a new lobby for any active game mode: `LeagueClientAPI#createLobby`
 - You can set your Solo & Duo Rank to Challenger (only visible in chat module, not profile): `LeagueClientAPI#fakeRank`
+- ... and a bunch more (check the LeagueClientAPI class)
 
 ### How do I contribute/find more endpoints?
 Easiest way is to use an IFEO debugger to get rid of some of the flags that get applied to the client when it gets started.

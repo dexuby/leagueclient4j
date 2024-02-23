@@ -76,12 +76,12 @@ public class LeagueClientAPI {
     }
 
     @NotNull
-    public CompletableFuture<CurrentSummoner> getCurrentSummoner() {
+    public CompletableFuture<Summoner> getCurrentSummoner() {
 
         final HttpRequest request = this.createGetRequest("/lol-summoner/v1/current-summoner", this.requestData.clientPort(), this.requestData.clientToken());
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenApply(response -> Constants.GSON.fromJson(response, CurrentSummoner.class));
+                .thenApply(response -> Constants.GSON.fromJson(response, Summoner.class));
 
     }
 
@@ -120,6 +120,13 @@ public class LeagueClientAPI {
 
     }
 
+    /**
+     * Creates a new lobby.
+     *
+     * @param queueId The queue id.
+     * @return CompletableFuture of type JsonObject.
+     */
+
     @NotNull
     public CompletableFuture<JsonObject> createLobby(final int queueId) {
 
@@ -127,6 +134,129 @@ public class LeagueClientAPI {
         return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
                 .thenApply(response -> Constants.GSON.fromJson(response, JsonObject.class));
+
+    }
+
+    /**
+     * Delete the active lobby.
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> deleteLobby() {
+
+        final HttpRequest request = this.createDeleteRequest("/lol-lobby/v2/lobby", this.requestData.clientPort(), this.requestData.clientToken());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    /**
+     * Starts the matchmaking queue.
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> startQueue() {
+
+        final HttpRequest request = this.createPostRequest("/lol-lobby/v2/lobby/matchmaking/search", this.requestData.clientPort(), this.requestData.clientToken(), "");
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    /**
+     * Cancels the active matchmaking queue.
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> cancelQueue() {
+
+        final HttpRequest request = this.createDeleteRequest("/lol-lobby/v2/lobby/matchmaking/search", this.requestData.clientPort(), this.requestData.clientToken());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    public CompletableFuture<Summoner[]> findSummonersByAliases(@NotNull final List<AccountName> accountNames) {
+
+        final HttpRequest request = this.createPostRequest("/lol-summoner/v1/summoners/aliases", this.requestData.clientPort(), this.requestData.clientToken(), Constants.GSON.toJson(accountNames));
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(response -> Constants.GSON.fromJson(response, Summoner[].class));
+
+    }
+
+    public CompletableFuture<Summoner> findSummonerBySummonerId(final int summonerId) {
+
+        final HttpRequest request = this.createGetRequest("/lol-summoner/v1/summoners/" + summonerId, this.requestData.clientPort(), this.requestData.clientToken());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(response -> Constants.GSON.fromJson(response, Summoner.class));
+
+    }
+
+    public CompletableFuture<Summoner> findSummonerByPUUID(@NotNull final String puuid) {
+
+        final HttpRequest request = this.createGetRequest("/lol-summoner/v2/summoners/puuid/" + puuid, this.requestData.clientPort(), this.requestData.clientToken());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenApply(response -> Constants.GSON.fromJson(response, Summoner.class));
+
+    }
+
+    /**
+     * Accepts the active ready check.
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> acceptReadyCheck() {
+
+        final HttpRequest request = this.createPostRequest("/lol-matchmaking/v1/ready-check/accept", this.requestData.clientPort(), this.requestData.clientToken(), "");
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    /**
+     * Declines the active ready check.
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> declineReadyCheck() {
+
+        final HttpRequest request = this.createPostRequest("/lol-matchmaking/v1/ready-check/decline", this.requestData.clientPort(), this.requestData.clientToken(), "");
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    /**
+     * Re-rolls the active champion. (ARAM)
+     *
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> rerollChampion() {
+
+        final HttpRequest request = this.createPostRequest("/lol-champ-select/v1/session/my-selection/reroll", this.requestData.clientPort(), this.requestData.clientToken(), "");
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding()).thenAccept(HttpResponse::body);
+
+    }
+
+    /**
+     * Report a summoner.
+     *
+     * @param reportRequest The report request.
+     * @return CompletableFuture of type Void.
+     */
+
+    public CompletableFuture<Void> report(@NotNull final ReportRequest reportRequest) {
+
+        final HttpRequest request = this.createGetRequest("/lol-player-report-sender/v1/in-game-reports", this.requestData.clientPort(), this.requestData.clientToken());
+        return this.httpClient.sendAsync(request, HttpResponse.BodyHandlers.discarding())
+                .thenRun(() -> {
+                    final HttpRequest actualRequest = this.createPostRequest("/lol-player-report-sender/v1/end-of-game-reports", this.requestData.clientPort(), this.requestData.clientToken(), Constants.GSON.toJson(reportRequest));
+                    this.httpClient.sendAsync(actualRequest, HttpResponse.BodyHandlers.discarding());
+                });
 
     }
 
@@ -145,7 +275,7 @@ public class LeagueClientAPI {
 
     }
 
-    private HttpRequest createGetRequest(@NotNull final String endpoint, @NotNull final String port, @NotNull final String token) {
+    protected HttpRequest createGetRequest(@NotNull final String endpoint, @NotNull final String port, @NotNull final String token) {
 
         return HttpRequest.newBuilder()
                 .uri(URI.create("https://127.0.0.1:" + port + endpoint))
@@ -158,7 +288,7 @@ public class LeagueClientAPI {
 
     }
 
-    private HttpRequest createPostRequest(@NotNull final String endpoint, @NotNull final String port, @NotNull final String token, @NotNull final String content) {
+    protected HttpRequest createPostRequest(@NotNull final String endpoint, @NotNull final String port, @NotNull final String token, @NotNull final String content) {
 
         return HttpRequest.newBuilder()
                 .uri(URI.create("https://127.0.0.1:" + port + endpoint))
@@ -167,6 +297,19 @@ public class LeagueClientAPI {
                         "Content-Type", "application/json"
                 )
                 .POST(HttpRequest.BodyPublishers.ofString(content))
+                .build();
+
+    }
+
+    protected HttpRequest createDeleteRequest(@NotNull final String endpoint, @NotNull final String port, @NotNull final String token) {
+
+        return HttpRequest.newBuilder()
+                .uri(URI.create("https://127.0.0.1:" + port + endpoint))
+                .headers(
+                        "Authorization", "Basic " + token,
+                        "Content-Type", "application/json"
+                )
+                .DELETE()
                 .build();
 
     }

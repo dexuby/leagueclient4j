@@ -12,7 +12,7 @@ import java.util.List;
 
 public class LeagueClientAPITest {
 
-    public static void main(@NotNull final String[] args) {
+    public static void main(@NotNull final String[] args) throws InterruptedException {
 
         final LeagueClientAPI leagueClientAPI = LeagueClient.getInstance().hookAPI();
         if (leagueClientAPI == null) return;
